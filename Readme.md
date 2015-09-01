@@ -1,6 +1,6 @@
 Ensure that all dependencies are installed
 
-   npm install
+    npm install
 
 To use with nodejs:
 
