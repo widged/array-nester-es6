@@ -4,15 +4,16 @@ Ensure that all dependencies are installed
 
 To use with nodejs:
 
-    cd array-nester-es6
-    babel-node usage/node-demo.es6.js
+    cd array-nester-es6/usage
+    babel-node node-demo.es6.js
 
 To use in the browser:
 
-    cd array-nester-es6
-    cd usage
+    cd array-nester-es6/usage
     webpack
     open index.html 
+
+For information on webpack and how to use it, read [Using ES6 Modules with Webpack](http://www.zsoltnagy.eu/using-es6-modules-with-webpack/) by Zsolt-Nagy
 
 To test
 

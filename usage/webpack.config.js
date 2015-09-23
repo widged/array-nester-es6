@@ -5,10 +5,8 @@ module.exports = {
         filename : 'browser-demo.es5.js'
     },
     module : {
-        loaders: [ { 
-                test   : /.js$/,
-                loader : 'babel-loader' 
-            }
+        loaders: [ 
+            {  test   : /.js$/, loader : 'babel-loader' }
         ]
     }
 };
