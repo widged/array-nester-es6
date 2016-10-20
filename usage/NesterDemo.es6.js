@@ -3,7 +3,7 @@
 export default class NesterDemo {
 
 	static run() {
-		let Nester  = require('../src/Nester.es6.js');
+		let Nester  = require('../src/FluentNester.es6.js');
 
 		let dataMap = getData();
 
@@ -15,8 +15,6 @@ export default class NesterDemo {
 		return JSON.stringify(nested, null, 2);
 	}
 }
-
-
 
 
 function getData() {

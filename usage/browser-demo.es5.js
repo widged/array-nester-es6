@@ -356,7 +356,7 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/* jshint esnext: true */
 
@@ -370,99 +370,16 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var Dict = (function () {
-	  function Dict() {
-	    _classCallCheck(this, Dict);
+	var Nester = __webpack_require__(3);
 
-	    this.state = { keys: [] };
-	  }
+	/*
+	  FluentNester provides a fluent interface to Nester.
+	  The interface is similar to d3.collection.nest.
+	*/
 
-	  _createClass(Dict, [{
-	    key: 'indexOf',
-	    value: function indexOf(key) {
-	      var keys = this.state.keys;
-
-	      var idx = keys.indexOf(key);
-	      if (idx === -1) {
-	        idx = keys.length;
-	        keys.push(key);
-	      }
-	      return idx;
-	    }
-	  }, {
-	    key: 'keyAt',
-	    value: function keyAt(idx) {
-	      var keys = this.state.keys;
-
-	      return keys[idx];
-	    }
-	  }, {
-	    key: 'listKeys',
-	    value: function listKeys() {
-	      return this.state.keys;
-	    }
-	  }]);
-
-	  return Dict;
-	})();
-
-	var FN = (function () {
-	  function FN() {
-	    _classCallCheck(this, FN);
-	  }
-
-	  _createClass(FN, null, [{
-	    key: 'identity',
-	    value: function identity(d) {
-	      return d;
-	    }
-	  }, {
-	    key: 'nestLines',
-	    value: function nestLines(lines, keys, rollup) {
-	      if (typeof rollup !== 'function') {
-	        rollup = FN.identity;
-	      }
-	      if (!keys.length) return rollup(lines);
-	      var keyValues = [];
-	      var key = keys.shift();
-	      var dict = new Dict();
-	      lines.forEach(function (line) {
-	        if (typeof key.label !== 'function') {
-	          key.label = FN.identity;
-	        }
-	        var keyStr = key.label(line);
-	        var idx = dict.indexOf(keyStr);
-	        if (keyValues[idx] === undefined) {
-	          keyValues[idx] = { key: keyStr, data: [] };
-	        }
-	        keyValues[idx].data.push(line);
-	      });
-
-	      keyValues.forEach(function (kv) {
-	        kv.values = FN.nestLines([].concat(kv.data), [].concat(keys), rollup);
-	        delete kv.data;
-	      });
-
-	      if (typeof key.sort === 'function') {
-	        keyValues.sort(function (a, b) {
-	          return key.sort(a.key, b.key);
-	        });
-	      }
-	      if (typeof key.sortValues === 'function') {
-	        keyValues.sort(function (a, b) {
-	          return key.sortValues(a.values, b.values);
-	        });
-	      }
-	      return keyValues;
-	    }
-	  }]);
-
-	  return FN;
-	})();
-
-	var Nester = (function () {
-	  function Nester() {
-	    _classCallCheck(this, Nester);
+	var FluentNester = (function () {
+	  function FluentNester() {
+	    _classCallCheck(this, FluentNester);
 
 	    this.state = {
 	      nest: {},
@@ -472,18 +389,25 @@
 	    };
 	  }
 
-	  _createClass(Nester, [{
+	  _createClass(FluentNester, [{
 	    key: 'key',
-	    value: function key(d) {
-	      var keys = this.state.keys;
+	    value: function key(_ref) {
+	      var label = _ref.label;
+	      var sort = _ref.sort;
 
-	      keys.push(d);
+	      this.state.keys = this.state.keys.slice().concat([{ label: label, sort: sort }]);
 	      return this;
 	    }
 	  }, {
 	    key: 'rollup',
-	    value: function rollup(f) {
-	      this.state.rollup = f;
+	    value: function rollup(_) {
+	      this.state.rollup = _;
+	      return this;
+	    }
+	  }, {
+	    key: 'sortValues',
+	    value: function sortValues(_) {
+	      this.state.sortValues = _;
 	      return this;
 	    }
 	  }, {
@@ -492,15 +416,110 @@
 	      var _state = this.state;
 	      var keys = _state.keys;
 	      var rollup = _state.rollup;
+	      var sortValues = _state.sortValues;
 
-	      return FN.nestLines(list, keys, rollup);
+	      var wrapup = function wrapup(arr) {
+	        if (typeof rollup !== 'function') {
+	          arr = rollup(arr);
+	        } else if (typeof sortValues === 'function') {
+	          arr.sort(sortValues);
+	        }
+	        return arr;
+	      };
+	      var nestLines = Nester(keys, wrapup);
+	      return nestLines(list, depth);
 	    }
 	  }]);
 
-	  return Nester;
+	  return FluentNester;
 	})();
 
+	exports['default'] = FluentNester;
+	module.exports = exports['default'];
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* jshint esnext: true */
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	var Grouper = __webpack_require__(4);
+
+	var Nester = function Nester(keys, rollup) {
+	  if (typeof rollup !== 'function') {
+	    rollup = function (d) {
+	      return d;
+	    };
+	  }
+	  var keyQty = keys ? keys.length : 0;
+	  return function (lines, maxDepth) {
+	    if (!maxDepth || maxDepth >= keyQty) {
+	      maxDepth = keyQty;
+	    }
+	    var recurse = function recurse(arr, depth) {
+	      if (depth >= maxDepth) {
+	        return rollup(arr);
+	      }
+	      var _keys$depth = keys[depth];
+	      var label = _keys$depth.label;
+	      var sort = _keys$depth.sort;
+
+	      var group = Grouper(label, sort);
+	      return group(arr).map(function (_ref) {
+	        var k = _ref.k;
+	        var v = _ref.v;
+	        return { key: k, values: recurse(v, depth + 1) };
+	      });
+	    };
+	    return recurse(lines, 0);
+	  };
+	};
+
 	exports['default'] = Nester;
+	module.exports = exports['default'];
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	var Grouper = function Grouper(kFn, sort) {
+	  return function (arr) {
+	    var ks = [],
+	        vs = []; // lightweight dictionary implementation with keys and values on the same index.
+	    arr.forEach(function (d) {
+	      var k = typeof kFn === 'function' ? kFn(d) : d;
+	      var idx = ks.indexOf(k);if (idx === -1) {
+	        idx = ks.length;ks.push(k);
+	      }
+	      if (vs[idx] === undefined) {
+	        vs[idx] = [];
+	      }
+	      vs[idx].push(d);
+	    });
+	    var sortK = typeof sort === 'function' ? function (a, b) {
+	      return sort(a.k, b.k);
+	    } : undefined;
+	    return ks.map(function (k, i) {
+	      return { k: k, i: i };
+	    }).sort(sortK).map(function (_ref) {
+	      var k = _ref.k;
+	      var i = _ref.i;
+	      return { k: k, v: vs[i] };
+	    });
+	  };
+	};
+
+	exports['default'] = Grouper;
 	module.exports = exports['default'];
 
 /***/ }
