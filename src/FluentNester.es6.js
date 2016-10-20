@@ -17,8 +17,9 @@ export default class FluentNester {
     };
   }
 
-  key({label, sort}) {
-    this.state.keys = this.state.keys.slice().concat([{label, sort}]);
+  key(d) {
+    if(typeof d === 'function') { d = {label: d}; }
+    this.state.keys = this.state.keys.slice().concat([d]);
     return this;
   }
 
@@ -27,12 +28,17 @@ export default class FluentNester {
     return this;
   }
 
+  sortKeys(fn) {
+    this.state.keys[length-1].sort =  order;
+    return this;
+  }
+
   sortValues(_) {
     this.state.sortValues = _;
     return this;
   }
 
-  nest(list, depth) {
+  entries(list, depth) {
     let {keys, rollup, sortValues} = this.state;
     var wrapup = (arr) => {
       if(typeof rollup === 'function') {
@@ -43,8 +49,8 @@ export default class FluentNester {
       return arr;
     };
     var packer = ({k,v}) => { return {key: k, values: v}; };
-    var nestLines = Nester(keys, wrapup, packer);
-    return nestLines(list, depth);
+    var nester = new Nester(keys, wrapup, packer);
+    return nester.run(list, depth);
   }
 
 }

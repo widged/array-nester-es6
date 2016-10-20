@@ -12,7 +12,7 @@
   describe('Indexer', function() {
     it('it attaches an index to each line', function() {
       var cv = (d) => { return /[aeiou]/i.test(d) ? 'v' : 'c'; };
-      var index = Indexer([
+      var indexer = new Indexer([
               {label: function(d) { return cv(d[0]); }, sort: sort.ascendingStrings },
               {label: function(d) { return cv(d[1]); }, sort: sort.descendingStrings },
       ]);
@@ -23,7 +23,7 @@
         {"k":["v","v"],"v":["eos","iusto"]},
         {"k":["v","c"],"v":["At","et","accusamus","et","odio"]}
       ];
-      assert.deepEqual(expected,index(data));
+      assert.deepEqual(expected,indexer.run(data));
     });
 
   });
