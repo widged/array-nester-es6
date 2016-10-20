@@ -35,7 +35,7 @@ export default class FluentNester {
   nest(list, depth) {
     let {keys, rollup, sortValues} = this.state;
     var wrapup = (arr) => {
-      if(typeof rollup !== 'function') {
+      if(typeof rollup === 'function') {
         arr = rollup(arr);
       } else if(typeof sortValues === 'function') {
         arr.sort(sortValues);

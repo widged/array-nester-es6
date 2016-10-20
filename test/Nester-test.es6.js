@@ -9,10 +9,7 @@
   var Nester  = require('../src/Nester.es6.js');
 
 
-  // ##################################################
-
-
-    describe('recursive nester', function() {
+    describe('Nester', function() {
       it('returns an array of each distinct key in arbitrary order', function() {
         var data = [{foo: 1}, {foo: 1}, {foo: 2}];
         var nest = Nester( [{label: function({foo}) { return foo; }}] );
