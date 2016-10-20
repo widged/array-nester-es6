@@ -8,7 +8,7 @@
   var assert  = require('assert');
   var {compose, indexify, pick, sort}  = require('../src/utils.es6.js');
 
-  describe('recursive nester', function() {
+  describe('utils', function() {
 
     describe('compose', function() {
       it('compose multiple functions', function() {
@@ -22,20 +22,26 @@
         var expected = 20;
         assert.deepEqual(expected,actual);
       });
+    });
 
+    describe('indexify', function() {
       it('indexify', function() {
         var actual = 'a,b,c,d,e,f,g'.split(',').map(indexify);
         var expected = [{"d":"a","i":0},{"d":"b","i":1},{"d":"c","i":2},{"d":"d","i":3},{"d":"e","i":4},{"d":"f","i":5},{"d":"g","i":6}];
         assert.deepEqual(actual, expected);
       });
+    });
 
+    describe('pick', function() {
       it('pick', function() {
         var data = [{"d":"a","i":0},{"d":"b","i":1},{"d":"c","i":2},{"d":"d","i":3},{"d":"e","i":4},{"d":"f","i":5},{"d":"g","i":6}];
         var actual = data.map(pick('d'));
         var expected = ["a","b","c","d","e","f","g"];
         assert.deepEqual(actual, expected);
       });
+    });
 
+    describe('sort', function() {
       it('sort.ascendingNumbers', function() {
         var actual = [1,3,4,6,2,5].sort(sort.ascendingNumbers);
         var expected = [ 1, 2, 3, 4, 5, 6 ];

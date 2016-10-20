@@ -1,9 +1,7 @@
 /* jshint esnext: true */
 
-var Grouper  = require('./Grouper.es6.js');
-
+var Grouper     = require('./Grouper.es6.js');
 var {indexify}  = require('./utils.es6.js');
-
 
 var KeyNester = (leaves) => {
   return (keys, maxDepth) => {

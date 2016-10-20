@@ -42,7 +42,8 @@ export default class FluentNester {
       }
       return arr;
     };
-    var nestLines = Nester(keys, wrapup);
+    var packer = ({k,v}) => { return {key: k, values: v}; };
+    var nestLines = Nester(keys, wrapup, packer);
     return nestLines(list, depth);
   }
 
