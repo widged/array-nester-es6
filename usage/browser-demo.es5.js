@@ -93,7 +93,7 @@
 					}, sort: undefined }).rollup(function (leaves) {
 					return leaves.length;
 				});
-				var nested = nester.nest(dataMap);
+				var nested = nester.entries(dataMap);
 				return JSON.stringify(nested, null, 2);
 			}
 		}]);
@@ -391,11 +391,11 @@
 
 	  _createClass(FluentNester, [{
 	    key: 'key',
-	    value: function key(_ref) {
-	      var label = _ref.label;
-	      var sort = _ref.sort;
-
-	      this.state.keys = this.state.keys.slice().concat([{ label: label, sort: sort }]);
+	    value: function key(d) {
+	      if (typeof d === 'function') {
+	        d = { label: d };
+	      }
+	      this.state.keys = this.state.keys.slice().concat([d]);
 	      return this;
 	    }
 	  }, {
@@ -405,29 +405,40 @@
 	      return this;
 	    }
 	  }, {
+	    key: 'sortKeys',
+	    value: function sortKeys(fn) {
+	      this.state.keys[length - 1].sort = order;
+	      return this;
+	    }
+	  }, {
 	    key: 'sortValues',
 	    value: function sortValues(_) {
 	      this.state.sortValues = _;
 	      return this;
 	    }
 	  }, {
-	    key: 'nest',
-	    value: function nest(list, depth) {
+	    key: 'entries',
+	    value: function entries(list, depth) {
 	      var _state = this.state;
 	      var keys = _state.keys;
 	      var rollup = _state.rollup;
 	      var sortValues = _state.sortValues;
 
 	      var wrapup = function wrapup(arr) {
-	        if (typeof rollup !== 'function') {
+	        if (typeof rollup === 'function') {
 	          arr = rollup(arr);
 	        } else if (typeof sortValues === 'function') {
 	          arr.sort(sortValues);
 	        }
 	        return arr;
 	      };
-	      var nestLines = Nester(keys, wrapup);
-	      return nestLines(list, depth);
+	      var packer = function packer(_ref) {
+	        var k = _ref.k;
+	        var v = _ref.v;
+	        return { key: k, values: v };
+	      };
+	      var nester = new Nester(keys, wrapup, packer);
+	      return nester.run(list, depth);
 	    }
 	  }]);
 
@@ -448,37 +459,68 @@
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
 	var Grouper = __webpack_require__(4);
 
-	var Nester = function Nester(keys, rollup) {
-	  if (typeof rollup !== 'function') {
-	    rollup = function (d) {
+	// the `pack` function can be used to reformat the {k,v} value for compatibility with other libraries. For instance, d3 uses {key,values}.
+
+	var Nester = (function () {
+	  function Nester(keys, rollup, pack) {
+	    _classCallCheck(this, Nester);
+
+	    var identity = function identity(d) {
 	      return d;
 	    };
-	  }
-	  var keyQty = keys ? keys.length : 0;
-	  return function (lines, maxDepth) {
-	    if (!maxDepth || maxDepth >= keyQty) {
-	      maxDepth = keyQty;
+	    if (typeof rollup !== 'function') {
+	      rollup = identity;
 	    }
-	    var recurse = function recurse(arr, depth) {
-	      if (depth >= maxDepth) {
-	        return rollup(arr);
-	      }
-	      var _keys$depth = keys[depth];
-	      var label = _keys$depth.label;
-	      var sort = _keys$depth.sort;
+	    if (typeof pack !== 'function') {
+	      pack = identity;
+	    }
+	    this.state = { keys: keys, rollup: rollup, pack: pack };
+	  }
 
-	      var group = Grouper(label, sort);
-	      return group(arr).map(function (_ref) {
-	        var k = _ref.k;
-	        var v = _ref.v;
-	        return { key: k, values: recurse(v, depth + 1) };
-	      });
-	    };
-	    return recurse(lines, 0);
-	  };
-	};
+	  _createClass(Nester, [{
+	    key: 'run',
+	    value: function run(lines, maxDepth) {
+	      var _state = this.state;
+	      var keys = _state.keys;
+	      var rollup = _state.rollup;
+	      var pack = _state.pack;
+
+	      var keyQty = keys ? keys.length : 0;
+	      if (!maxDepth || maxDepth >= keyQty) {
+	        maxDepth = keyQty;
+	      }
+	      var recurse = function recurse(arr, depth) {
+	        if (depth >= maxDepth) {
+	          return rollup(arr);
+	        }
+	        var _keys$depth = keys[depth];
+	        var label = _keys$depth.label;
+	        var sort = _keys$depth.sort;
+
+	        var group = new Grouper(label, sort);
+	        var gps = group.run(arr);
+	        for (var i = 0, ni = gps.length; i < ni; i++) {
+	          var _gps$i = gps[i];
+	          var k = _gps$i.k;
+	          var v = _gps$i.v;
+
+	          gps[i] = pack({ k: k, v: recurse(v, depth + 1) });
+	        }
+	        return gps;
+	      };
+	      return recurse(lines, 0);
+	    }
+	  }]);
+
+	  return Nester;
+	})();
 
 	exports['default'] = Nester;
 	module.exports = exports['default'];
@@ -487,37 +529,59 @@
 /* 4 */
 /***/ function(module, exports) {
 
+	/* jshint esnext: true */
+
 	'use strict';
 
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
-	var Grouper = function Grouper(kFn, sort) {
-	  return function (arr) {
-	    var ks = [],
-	        vs = []; // lightweight dictionary implementation with keys and values on the same index.
-	    arr.forEach(function (d) {
-	      var k = typeof kFn === 'function' ? kFn(d) : d;
-	      var idx = ks.indexOf(k);if (idx === -1) {
-	        idx = ks.length;ks.push(k);
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	var Grouper = (function () {
+	  function Grouper(kFn, sort) {
+	    _classCallCheck(this, Grouper);
+
+	    this.state = { kFn: kFn, sort: sort };
+	  }
+
+	  _createClass(Grouper, [{
+	    key: 'run',
+	    value: function run(lines) {
+	      var _state = this.state;
+	      var kFn = _state.kFn;
+	      var sort = _state.sort;
+
+	      var ks = [],
+	          vs = [];
+	      // lightweight dictionary implementation with keys and values on the same index.
+	      // Benchmarking indicates that it is slightly more efficient than using
+	      // var gps = {}; if(!gps.hasOwnProperty(k))
+	      for (var l = 0, nl = lines.length; l < nl; l++) {
+	        var line = lines[l];
+	        var k = typeof kFn === 'function' ? kFn(line) : kFn;
+	        var idx = ks.indexOf(k);if (idx === -1) {
+	          idx = ks.length;ks.push(k);
+	        }
+	        if (vs[idx] === undefined) {
+	          vs[idx] = [];
+	        }
+	        vs[idx].push(line);
 	      }
-	      if (vs[idx] === undefined) {
-	        vs[idx] = [];
-	      }
-	      vs[idx].push(d);
-	    });
-	    var sortK = typeof sort === 'function' ? function (a, b) {
-	      return sort(a.k, b.k);
-	    } : undefined;
-	    return ks.map(function (k, i) {
-	      return { k: k, i: i };
-	    }).sort(sortK).map(function (_ref) {
-	      var k = _ref.k;
-	      var i = _ref.i;
-	      return { k: k, v: vs[i] };
-	    });
-	  };
-	};
+	      var sortK = typeof sort === 'function' ? function (a, b) {
+	        return sort(a.k, b.k);
+	      } : undefined;
+	      return ks.map(function (k, i) {
+	        return { k: k, v: vs[i] };
+	      }).sort(sortK);
+	    }
+	  }]);
+
+	  return Grouper;
+	})();
 
 	exports['default'] = Grouper;
 	module.exports = exports['default'];

@@ -11,7 +11,7 @@ export default class NesterDemo {
 					.key({label: (d) => { return d.status; }, sort: function(a,b) { if(a === 'In Progress') { return -1; } else {return +1; }  }})
 					.key({label: (d) => { return d.priority; }, sort: undefined})
 					.rollup(function(leaves) { return leaves.length; });
-		let nested = nester.nest(dataMap);
+		let nested = nester.entries(dataMap);
 		return JSON.stringify(nested, null, 2);
 	}
 }
