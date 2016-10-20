@@ -34,16 +34,22 @@ Utilities to group, index, and nest data (transpiled from es6, browser+nodejs).
 
 ### Nester
 
-    var nest = Nester(
-      [{label: function(d) { return d.foo; }, sort: function(a,b) { return a-b; } }],
-      (leaves) => { return leaves.reduce((acc,d) => { return acc+(d.bar||0); }, 0); }
-    );
-    var nested = nest([{foo: 1, bar: 2}, {foo: 1, bar: 0}, {foo: 1, bar: 1}, {foo: 2}]);
+  var nest = Nester([
+    {label: function(d) { return d[0]; } },
+    {label: function(d) { return d[1]; } }
+  ]);
+  var nested = nest([[0, 1], [0, 2], [1, 1], [1, 2], [0, 2]]);
     /*
-      [
-        {"key":1,"values":3},
-        {"key":2,"values":0}
-      ]
+    [ {
+      "key":0,"values":[
+        {"key":1,"values":[[0,1]]},
+        {"key":2,"values":[[0,2],[0,2]]}
+      ]}, {
+      "key":1,"values":[
+        {"key":1,"values":[[1,1]]},
+        {"key":2,"values":[[1,2]]}
+      ]}
+    ];
     */
 
 # Installing and Running
