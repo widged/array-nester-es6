@@ -3,7 +3,7 @@ var Nester         = require('../src/Nester.es6.js');
 var Indexer        = require('../src/Indexer.es6.js');
 var IndexNester    = require('../src/IndexNester.es6.js');
 var FluentNester   = require('../src/FluentNester.es6.js');
-var {nest: d3nest} = require('./d3-collection/index.js');
+var {nest: d3nest} = require('./d3-collection.js');
 var compare        = require('../test/compare.es6.js');
 
 var suite = ({lineQty}) => {
