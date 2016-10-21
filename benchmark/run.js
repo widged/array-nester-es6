@@ -13,13 +13,13 @@ var configs = {
 
 var runConfig = (config) => {
   var {repetitions, lineQty, showResult} = config;
-  console.log('----------------------------------')
+  console.log('-- ' + JSON.stringify(config) + ' -------');
   benchmarkSuite(suite, repetitions, {lineQty: lineQty}).map(({name, padding, average, result}) => {
     var timeAverage = (Math.round(average * Math.pow(10,6)) / Math.pow(10,3)).toFixed(3);
     var info = showResult? '\n' + JSON.stringify(result) + '\n' : timeAverage;
     console.log(name + padding + '  ', info)
   });
-  console.log('----------------------------------')
+  console.log();
 };
 runConfig(configs.default)
 runConfig(configs.checkResults);
