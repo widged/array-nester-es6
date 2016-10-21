@@ -1,5 +1,12 @@
 /* jshint esnext: true */
 
+// #############################################################################
+// ##  Nest lines of data with a succession of indices dynmically computed
+// ##  from the line content.
+// #############################################################################
+
+// See test/Nester-test.es6.js for examples and usage information.
+
 var Grouper  = require('./Grouper.es6.js');
 
 // the `pack` function can be used to reformat the {k,v} value for compatibility with other libraries. For instance, d3 uses {key,values}.

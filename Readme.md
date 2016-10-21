@@ -19,8 +19,8 @@ Utilities to group, index, and nest data (transpiled from es6, browser+nodejs).
 
     var cv = (d) => { return /[aeiou]/i.test(d) ? 'v' : 'c'; };
     var index = Indexer([
-            {label: function(d) { return cv(d[0]); }, sort: sort.ascendingStrings },
-            {label: function(d) { return cv(d[1]); }, sort: sort.descendingStrings },
+            {label: function(d) { return cv(d[0]); }, sort: compare.ascendingStrings },
+            {label: function(d) { return cv(d[1]); }, sort: compare.descendingStrings },
     ]);
     var indexed = index("At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium".split(/\W+/));
     /*

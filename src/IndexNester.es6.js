@@ -1,9 +1,14 @@
 /* jshint esnext: true */
 
-var Grouper     = require('./Grouper.es6.js');
-var {indexify}  = require('./utils.es6.js');
+// #############################################################################
+// ##  Nest a succession of indices \
+// #############################################################################
 
-class KeyNester {
+// See test/IndexNester-test.es6.js for examples and usage information.
+
+var Grouper     = require('./Grouper.es6.js');
+
+class IndexNester {
   constructor(rollup) {
     if (typeof rollup !== 'function') { rollup = (d) => { return d; }; }
     this.state = {rollup};
@@ -11,6 +16,7 @@ class KeyNester {
 
   run(lines, maxDepth) {
     var {rollup} = this.state;
+    var indexify      = (d,i) => { return {d,i}; };
     var indexed = lines.map(indexify);
     var keyQty = lines[0].length;
     if(!maxDepth || maxDepth > keyQty) { maxDepth = keyQty; }
@@ -25,5 +31,4 @@ class KeyNester {
 
 }
 
-
-export default KeyNester;
+export default IndexNester;

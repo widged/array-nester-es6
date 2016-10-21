@@ -7,14 +7,14 @@
 
   var assert  = require('assert');
   var Indexer  = require('../src/Indexer.es6.js');
-  var {sort}   = require('../src/utils.es6.js');
+  var compare   = require('./compare.es6.js');
 
   describe('Indexer', function() {
     it('it attaches an index to each line', function() {
       var cv = (d) => { return /[aeiou]/i.test(d) ? 'v' : 'c'; };
       var indexer = new Indexer([
-              {label: function(d) { return cv(d[0]); }, sort: sort.ascendingStrings },
-              {label: function(d) { return cv(d[1]); }, sort: sort.descendingStrings },
+              {label: function(d) { return cv(d[0]); }, sort: compare.ascendingStrings },
+              {label: function(d) { return cv(d[1]); }, sort: compare.descendingStrings },
       ]);
       var data = "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium".split(/\W+/);
       var expected = [

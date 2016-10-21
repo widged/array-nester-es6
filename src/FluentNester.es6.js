@@ -1,11 +1,14 @@
 /* jshint esnext: true */
 
+// #############################################################################
+// ##  FluentNester provides a fluent interface to Nester.
+// ##  The interface is equivalent to d3.collection.nest.
+// #############################################################################
+
+// See test/FluentNester-test.es6.js for examples and usage information.
+
 var Nester  = require('../src/Nester.es6.js');
 
-/*
-  FluentNester provides a fluent interface to Nester.
-  The interface is similar to d3.collection.nest.
-*/
 export default class FluentNester {
 
   constructor() {

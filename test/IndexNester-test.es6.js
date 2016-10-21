@@ -5,19 +5,20 @@
 
   'use strict';
 
-  var assert         = require('assert');
-  var KeyNester      = require('../src/KeyNester.es6.js');
-  var Indexer        = require('../src/Indexer.es6.js');
-  var {pick, sort}   = require('../src/utils.es6.js');
+  var assert      = require('assert');
+  var IndexNester = require('../src/IndexNester.es6.js');
+  var Indexer     = require('../src/Indexer.es6.js');
+  var {pick}      = require('../src/fn.es6.js');
+  var compare     = require('./compare.es6.js');
 
-  describe('KeyNester', function() {
+  describe('IndexNester', function() {
     it('attaches an index to each line', function() {
       var data = "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium".split(/\W+/);
       var cv = (d) => { return /[aeiou]/i.test(d) ? 'v' : 'c'; }
       var indexer = new Indexer(
             [
-                  {label: function(d) { return cv(d[0]) }, sort: sort.ascendingStrings },
-                  {label: function(d) { return cv(d[1]) }, sort: sort.descendingStrings },
+                  {label: function(d) { return cv(d[0]) }, sort: compare.ascendingStrings },
+                  {label: function(d) { return cv(d[1]) }, sort: compare.descendingStrings },
             ]
       );
       var expected = [
@@ -33,13 +34,13 @@
       var data = [[1, 1, 1], [1, 1, 2], [1, 2, 1], [1, 2, 2], [2, 1, 1], [2, 1, 2], [2, 2, 1], [2, 2, 2]];
       var indexer = new Indexer(
             [
-                  {label: function(d) { return '_'+d[0]; }, sort: sort.descendingNumbers },
-                  {label: function(d) { return '_'+d[1]; }, sort: sort.ascendingNumbers },
-                  {label: function(d) { return '_'+d[2]; }, sort: sort.descendingNumbers }
+                  {label: function(d) { return '_'+d[0]; }, sort: compare.descendingNumbers },
+                  {label: function(d) { return '_'+d[1]; }, sort: compare.ascendingNumbers },
+                  {label: function(d) { return '_'+d[2]; }, sort: compare.descendingNumbers }
             ]
       );
       var indexed = indexer.run(data);
-      var nester = new KeyNester((leaves) => { return leaves.map(({d,i}) => { return pick('v')(indexed[i]); })
+      var nester = new IndexNester((leaves) => { return leaves.map(({d,i}) => { return pick('v')(indexed[i]); })
       });
       var actual = nester.run(indexed.map(pick('k')));
       var expected = [
