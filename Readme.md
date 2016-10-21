@@ -6,8 +6,8 @@ Utilities to group, index, and nest data (transpiled from es6, browser+nodejs).
 
 ###  Grouper
 
-      var group = Grouper(({foo}) => { return (foo % 2 === 0) ? 'even' : 'odd'; });
-      var gps = group([{foo: 1}, {foo: 2}, {foo: 3}]);
+      var grouper = new Grouper(({foo}) => { return (foo % 2 === 0) ? 'even' : 'odd'; });
+      var gps = grouper.run([{foo: 1}, {foo: 2}, {foo: 3}]);
       /*
       [
         {"k":"odd","v":[{"foo":1},{"foo":3}]},
@@ -18,11 +18,11 @@ Utilities to group, index, and nest data (transpiled from es6, browser+nodejs).
 ### Indexer
 
     var cv = (d) => { return /[aeiou]/i.test(d) ? 'v' : 'c'; };
-    var index = Indexer([
+    var indexer = new Indexer([
             {label: function(d) { return cv(d[0]); }, sort: compare.ascendingStrings },
             {label: function(d) { return cv(d[1]); }, sort: compare.descendingStrings },
     ]);
-    var indexed = index("At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium".split(/\W+/));
+    var indexed = indexer.run("At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium".split(/\W+/));
     /*
       [
         {"k":["c","v"],"v":["vero","dignissimos","ducimus","qui"]},
@@ -34,11 +34,11 @@ Utilities to group, index, and nest data (transpiled from es6, browser+nodejs).
 
 ### Nester
 
-    var nest = Nester([
+    var nester = new Nester([
       {label: function(d) { return d[0]; } },
       {label: function(d) { return d[1]; } }
     ]);
-    var nested = nest([[0, 1], [0, 2], [1, 1], [1, 2], [0, 2]]);
+    var nested = nester.run([[0, 1], [0, 2], [1, 1], [1, 2], [0, 2]]);
       /*
       [ {
         "key":0,"values":[
