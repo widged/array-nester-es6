@@ -52,6 +52,32 @@ Utilities to group, index, and nest data (transpiled from es6, browser+nodejs).
       ];
       */
 
+# Performance compared to d3.collection.nest
+
+Benchmarking suites are available in the benchmark folder.
+
+Our Nester class is more efficient than d3nest on tiny and small datasets.
+
+    {repetitions: 100, lineQty: 1000}
+    Nester         0.060
+    IndexAndNest   0.171
+    d3nest         0.446
+
+Even more so on Medium datasets.
+
+    {repetitions: 100, lineQty: 50000}
+    Nester         1.889
+    IndexAndNest   3.933
+    d3nest         18.013
+
+Using Indexer and IndexNester is much more efficient on big data sets, as it avoids multiple iterations over the
+data lines.
+
+    {repetitions: 10,  lineQty: 1000000}
+    IndexAndNest    98.330
+    Nester         329.570
+    d3nest         345.846
+
 # Installing and Running
 
 Ensure that all dependencies are installed
