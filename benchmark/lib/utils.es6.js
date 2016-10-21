@@ -11,7 +11,7 @@ utils.average = (acc, d, i, arr) => {
   }
 };
 
-utils.maxLength = (acc, {name}) => { return Math.max(acc, name.length); };
+utils.maxLength = (acc, name) => { return Math.max(acc, name.length); };
 
 utils.paddingForMax = (max, char = " ") => {
   char = char.toString();

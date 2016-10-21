@@ -31,8 +31,8 @@ export default class FluentNester {
     return this;
   }
 
-  sortKeys(fn) {
-    this.state.keys[length-1].sort =  order;
+  sortKeys(compare) {
+    this.state.keys[length-1].sort =  compare;
     return this;
   }
 
@@ -51,7 +51,7 @@ export default class FluentNester {
       }
       return arr;
     };
-    var packer = ({k,v}) => { return {key: k, values: v}; };
+    var packer = ({k,v}) => { return {key: k.toString(), values: v}; };
     var nester = new Nester(keys, wrapup, packer);
     return nester.run(list, depth);
   }
