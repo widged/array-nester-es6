@@ -39,7 +39,7 @@ Utilities to group, index, and nest data (transpiled from es6, browser+nodejs).
       {label: function(d) { return cv(d[0]); }, sort: compare.ascendingStrings },
       {label: function(d) { return cv(d[1]); }, sort: compare.descendingStrings },
     ]);
-    var indexed = indexer.run("At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium".split(/\W+/));
+    var nester = nester.run("At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium".split(/\W+/));
       /*
       [
         {"k":"c","v":[
@@ -109,7 +109,7 @@ or
 To benchmark
 
     cd array-nester-es6
-    npm run bench
+    npm run perf
 
 or
 

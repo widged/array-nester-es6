@@ -1,13 +1,30 @@
 /* jshint esnext: true */
 
-// #############################################################################
-// ##  Nest a succession of indices \
-// #############################################################################
-
-// See test/IndexNester-test.es6.js for examples and usage information.
-
 var Grouper     = require('./Grouper.es6.js');
 
+/**
+ * Nest a list of indices
+ * See test/IndexNester-test.es6.js for usage information.
+ *
+ * **Example:**
+ *
+ * ```js
+ *  var data =   [[1, 'a'], [1, 'b'], [2, 'c'], [2, 'd']];
+ *  var values = data.map((d) => { return d.join('-') });
+ *  var nester = new IndexNester((leaves) => { return leaves.map(({d,i}) => { return values[i]; }); });
+ * =>
+ *   [
+ *     {"k":1,"v":[
+ *       {"k":"a","v":["1-a"]},
+ *       {"k":"b","v":["1-b"]}
+ *     ]},
+ *     {"k":2,"v":[
+ *       {"k":"c","v":["2-c"]},
+ *       {"k":"d","v":["2-d"]}
+ *     ]}
+ *   ];
+ *
+ */
 class IndexNester {
   constructor(rollup) {
     if (typeof rollup !== 'function') { rollup = (d) => { return d; }; }

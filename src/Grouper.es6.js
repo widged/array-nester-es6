@@ -1,10 +1,22 @@
 /* jshint esnext: true */
 
-// #############################################################################
-// ##  Group lines of data with an index dynmically computed from the line content.
-// #############################################################################
-
-// See test/Grouper-test.es6.js for examples and usage information.
+/**
+ * Group lines of data with an index dynmically computed from the line content.
+ * See test/Grouper-test.es6.js for usage information.
+ *
+ * **Example:**
+ *
+ * ```js
+ * var grouper = new Grouper(({foo}) => { return (foo % 2 === 0) ? 'even' : 'odd'; });
+ * var groups  = grouper.run([{foo: 1}, {foo: 2}, {foo: 3}]);
+ * =>
+ * [
+ *    {"k":"odd","v":[{"foo":1},{"foo":3}]},
+ *    {"k":"even","v":[{"foo":2}]}
+ * ];
+ * ```
+ *
+ */
 
 class Grouper {
   constructor (kFn, sort) {

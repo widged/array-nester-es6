@@ -1,18 +1,38 @@
 /* jshint esnext: true */
 
-// #############################################################################
-// ##  Nest lines of data with a succession of indices dynmically computed
-// ##  from the line content.
-// #############################################################################
-
-// See test/Nester-test.es6.js for examples and usage information.
-
 var Grouper  = require('./Grouper.es6.js');
 
-// the `pack` function can be used to reformat the {k,v} value for compatibility with other libraries. For instance, d3 uses {key,values}.
-
+/**
+ * Nest lines of data with a succession of indices dynmically computed
+ * from the line content.
+ *
+ * See test/Nester-test.es6.js for usage information.
+ *
+ * **Example:**
+ *
+ * ```js
+ * var cv = (d) => { return /[aeiou]/i.test(d) ? 'v' : 'c'; };
+ * var nester = new Nester([
+ *   {label: function(d) { return cv(d[0]); }, sort: compare.ascendingStrings },
+ *   {label: function(d) { return cv(d[1]); }, sort: compare.descendingStrings },
+ * ]);
+ * var nester = nester.run("At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium".split(/\W+/));
+ * =>
+ *   [
+ *     {"k":"c","v":[
+ *       {"k":"v","v":["vero","dignissimos","ducimus","qui"]},
+ *       {"k":"c","v":["blanditiis","praesentium"]}
+ *     ]},
+ *     {"k":"v","v":[
+ *       {"k":"v","v":["eos","iusto"]},
+ *       {"k":"c","v":["At","et","accusamus","et","odio"]}
+ *     ]}
+ *   ];
+ *
+ */
 class Nester {
 
+  // the `pack` function can be used to reformat the {k,v} value for compatibility with other libraries. For instance, d3 uses {key,values}.
   constructor(keys, rollup, pack) {
     var identity = (d) => { return d; };
     if (typeof rollup !== 'function') { rollup = identity; }

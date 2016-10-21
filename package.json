@@ -16,7 +16,7 @@
   },
   "scripts": {
     "test": "mocha --compilers js:./test/compiler.js test/*-test.es6.js",
-    "bench": "./benchmark/run.js"
+    "perf": "./benchmark/run.js"
   },
   "repository": {
     "type": "git",

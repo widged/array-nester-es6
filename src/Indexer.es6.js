@@ -1,7 +1,29 @@
 /* jshint esnext: true */
 
-// See test/Indexer-test.es6.js for examples and usage information.
-
+/**
+ * Index lines of data with a list of indices dynmically computed
+ * from the line content.
+ *
+ * See test/Indexer-test.es6.js for usage information.
+ *
+ * **Example:**
+ *
+ * ```js
+ * var cv = (d) => { return /[aeiou]/i.test(d) ? 'v' : 'c'; };
+ * var nester = new Nester([
+ *   {label: function(d) { return cv(d[0]); }, sort: compare.ascendingStrings },
+ *   {label: function(d) { return cv(d[1]); }, sort: compare.descendingStrings },
+ * ]);
+ * var indexed = indexer.run("At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium".split(/\W+/));
+ * =>
+ *   [
+ *     {"k":["c","v"],"v":["vero","dignissimos","ducimus","qui"]},
+ *     {"k":["c","c"],"v":["blanditiis","praesentium"]},
+ *     {"k":["v","v"],"v":["eos","iusto"]},
+ *     {"k":["v","c"],"v":["At","et","accusamus","et","odio"]}
+ *   ];
+ *
+ */
 class Indexer {
 
   constructor(keys, rollup)  {

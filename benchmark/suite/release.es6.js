@@ -1,10 +1,11 @@
-var Grouper        = require('../src/Grouper.es6.js');
-var Nester         = require('../src/Nester.es6.js');
-var Indexer        = require('../src/Indexer.es6.js');
-var IndexNester    = require('../src/IndexNester.es6.js');
-var FluentNester   = require('../src/FluentNester.es6.js');
-var {nest: d3nest} = require('./d3-collection.js');
-var compare        = require('../test/compare.es6.js');
+var compare        = require('../../test/compare.es6.js');
+
+var Grouper        = require('../../src/Grouper.es6.js');
+var Nester         = require('../../src/Nester.es6.js');
+var Indexer        = require('../../src/Indexer.es6.js');
+var IndexNester    = require('../../src/IndexNester.es6.js');
+var FluentNester   = require('../../src/FluentNester.es6.js');
+var {nest: d3nest} = require('../alternatives/d3-collection.js');
 
 var suite = ({lineQty}) => {
   var arr = Array.from(new Array(lineQty)).map((d,i) => { return i});
@@ -48,7 +49,7 @@ var suite = ({lineQty}) => {
     return d3nest().key(keys[0].label).key(keys[1].label).entries(arr.slice())
   };
 
-  return Object.keys(run).filter((k) => { return !/_skip$/.test(k); }).map((k) => { return {name: k, method: run[k]}; });
+  return Object.keys(run).map((k) => { return {name: k, method: run[k]}; });
 }
 
 export default suite

@@ -1,7 +1,7 @@
-var compare        = require('../test/compare.es6.js');
+var compare        = require('../../test/compare.es6.js');
 
-var Grouper        = require('../src/Grouper.es6.js');
-var GrouperSlower    = require('./alternatives/Grouper-slower.es6.js');
+var Grouper        = require('../../src/Grouper.es6.js');
+var GrouperSlower    = require('../alternatives/Grouper-slower.es6.js');
 
 var suite = ({lineQty}) => {
   var arr = Array.from(new Array(lineQty)).map((d,i) => { return i});
