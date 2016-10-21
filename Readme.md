@@ -56,14 +56,12 @@ Utilities to group, index, and nest data (transpiled from es6, browser+nodejs).
 
 Benchmarking suites are available in the benchmark folder.
 
-On tiny and small datasets, our Nester class is more efficient than d3nest.
+On tiny, small and medium datasets, our Nester class is more efficient than d3nest.
 
     {repetitions: 100, lineQty: 1000}
     Nester         0.060
     IndexAndNest   0.171
     d3nest         0.446
-
-On Medium datasets, the improvement is more noticeable.
 
     {repetitions: 100, lineQty: 50000}
     Nester         1.889
