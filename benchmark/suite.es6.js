@@ -1,7 +1,3 @@
-#!/usr/bin/env babel-node
-
-var benchmarkSuite    = require('./benchmark-suite.es6.js');
-
 var Grouper        = require('../src/Grouper.es6.js');
 var Nester         = require('../src/Nester.es6.js');
 var Indexer        = require('../src/Indexer.es6.js');
@@ -13,7 +9,7 @@ var compare        = require('../test/compare.es6.js');
 var GrouperSlower    = require('./alternatives/Grouper-slower.es6.js');
 var IndexerOptimised    = require('./alternatives/Indexer-optimised.es6.js');
 
-var tests = ({lineQty}) => {
+var suite = ({lineQty}) => {
   var arr = Array.from(new Array(lineQty)).map((d,i) => { return i});
   var keys = [
     {label: function(d) { return d % 2; }, sort: compare.ascendingNumbers },
@@ -21,45 +17,43 @@ var tests = ({lineQty}) => {
   ]
   var pickK = ({k}) => { return k; };
 
-  var suite = {};
+  var run = {};
 
-  suite.Grouper = () => {
+  run.Grouper = () => {
     var grouper = new Grouper(keys[0].label);
     return grouper.run(arr);
   };
 
-  suite.GrouperSlower = () => {
+  run.GrouperSlower = () => {
     var grouper = new GrouperSlower(keys[0].label);
     return grouper.run(arr);
   };
 
-
-
-  suite.Nester = () => {
+  run.Nester = () => {
 
     var nester = new Nester(keys);
     return nester.run(arr);
   };
 
-  suite.FluentNester = () => {
+  run.FluentNester = () => {
     return (new FluentNester()).key(keys[0]).key(keys[1]).entries(arr.slice())
   };
 
-  suite.d3nest = () => {
+  run.d3nest = () => {
     return d3nest().key(keys[0].label).key(keys[1].label).entries(arr.slice())
   };
 
-  suite.IndexerOptimised = () => {
+  run.IndexerOptimised = () => {
     var indexer = new IndexerOptimised(keys);
     return indexer.run(arr);
   };
 
-  suite.Indexer = () => {
+  run.Indexer = () => {
     var indexer = new Indexer(keys);
     return indexer.run(arr);
   };
 
-  suite.IndexNester = () => {
+  run.IndexNester = () => {
     var indexer = new Indexer(keys);
     var indexed = indexer.run(arr);
     var nester = new IndexNester((leaves) => {
@@ -68,16 +62,7 @@ var tests = ({lineQty}) => {
     return nester.run(indexed.map(pickK))
   };
 
-  return Object.keys(suite).filter((k) => { return !/_skip$/.test(k); }).map((k) => { return {name: k, method: suite[k]}; });
+  return Object.keys(run).filter((k) => { return !/_skip$/.test(k); }).map((k) => { return {name: k, method: run[k]}; });
 }
 
-console.log('----------------------------------')
-benchmarkSuite(tests, 50, {lineQty: 30000}).map(({name, padding, average, result}) => {
-  console.log(name + padding + '  ', (Math.round(average * Math.pow(10,6)) / Math.pow(10,3)).toFixed(3))
-//  console.log(JSON.stringify(result))
-});
-console.log('----------------------------------')
-/*
-0.005256145
-0.001697947
-*/
+export default suite
