@@ -104,3 +104,13 @@ or
 
     cd array-nester-es6
     mocha --compilers js:./test/compiler.js test/*-test.es6.js
+
+To benchmark
+
+    cd array-nester-es6
+    npm run bench
+
+or
+
+    cd array-nester-es6
+    benchmark/run.js
