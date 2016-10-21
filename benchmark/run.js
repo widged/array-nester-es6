@@ -2,7 +2,8 @@
 
 var benchmarkSuite    = require('./lib/benchmark-suite.es6.js');
 var release           = require('./suite/release.es6.js');
-var optimisations     = require('./suite/optimisations.es6.js');
+var optGrouper     = require('./suite/opt-grouper.es6.js');
+var optIndexer     = require('./suite/opt-indexer.es6.js');
 
 // var nesters = suite.filter()
 
@@ -28,7 +29,19 @@ var runConfig = (config, suite, filterFn) => {
   });
   console.log();
 };
-runConfig(configs.default, release, ({name}) => {return /nest/i.test(name);})
-runConfig(configs.default, release, ({name}) => {return !/nest/i.test(name);})
-runConfig(configs.default, optimisations)
-runConfig(configs.checkResults, release);
+
+
+var checkOpt = false;
+if(checkOpt) {
+
+  runConfig(configs.default, optGrouper)
+  runConfig(configs.default, optIndexer)
+  runConfig(configs.checkResults, optIndexer)
+
+} else {
+
+  runConfig(configs.default, release, ({name}) => {return /nest/i.test(name);})
+  runConfig(configs.default, release, ({name}) => {return !/nest/i.test(name);})
+  runConfig(configs.checkResults, release);
+
+}

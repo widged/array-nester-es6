@@ -1,7 +1,7 @@
 var compare        = require('../../test/compare.es6.js');
 
-var Grouper        = require('../../src/Grouper.es6.js');
-var GrouperSlower    = require('../alternatives/Grouper-slower.es6.js');
+var Indexer        = require('../../src/Indexer.es6.js');
+var IndexerFn    = require('../alternatives/Indexer-fn.es6.js');
 
 var suite = ({lineQty}) => {
   var arr = Array.from(new Array(lineQty)).map((d,i) => { return i});
@@ -13,14 +13,14 @@ var suite = ({lineQty}) => {
 
   var run = {};
 
-  run.Grouper = () => {
-    var grouper = new Grouper(keys[0].label);
-    return grouper.run(arr);
+  run.Indexer = () => {
+    var indexer = new Indexer(keys);
+    return indexer.run(arr);
   };
 
-  run.GrouperSlower = () => {
-    var grouper = new GrouperSlower(keys[0].label);
-    return grouper.run(arr);
+  run.IndexerFn = () => {
+    var indexer = new IndexerFn(keys);
+    return indexer.run(arr);
   };
 
 
